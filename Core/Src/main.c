@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "button.h"
+#include "software_timer.h"
 
 /* USER CODE END Includes */
 
@@ -137,6 +138,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -146,7 +148,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    /* USER CODE BEGIN 3 */
 
+        /* USER CODE END 3 */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

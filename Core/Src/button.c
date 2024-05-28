@@ -57,21 +57,6 @@ void getKeyInput()
                     }
                     timeForPress[i] = 200;
                 }
-                else
-                {
-                    if (i == 0)
-                    {
-                        button1_flagRelease = 0;
-                    }
-                    if (i == 1)
-                    {
-                        button2_flagRelease = 0;
-                    }
-                    if (i == 2)
-                    {
-                        button3_flagRelease = 0;
-                    }
-                }
             }
             else
             {
