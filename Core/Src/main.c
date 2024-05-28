@@ -146,7 +146,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    SCH_DispatchTasks();
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -281,7 +281,7 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   getKeyInput();
-  SCH_Update();
+  timerRun();
 }
 /* USER CODE END 4 */
 
