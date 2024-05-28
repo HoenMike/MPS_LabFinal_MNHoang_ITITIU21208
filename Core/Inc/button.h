@@ -5,20 +5,16 @@
  *      Author: hoang
  */
 
-#include "main.h"
 #ifndef INC_BUTTON_H_
 #define INC_BUTTON_H_
 
-#define NORMAL_STATE GPIO_PIN_SET
-#define PRESSED_STATE GPIO_PIN_RESET
+#include "main.h"
 
-extern int button1_flag;
-extern int button2_flag;
-extern int button3_flag;
+#define NORMAL_STATE SET
+#define PRESSED_STATE RESET
 
-extern int button1_flagRelease;
-extern int button2_flagRelease;
-extern int button3_flagRelease;
 void getKeyInput();
+int is_button_pressed(int index);
+int is_long_button_flag();
 
 #endif /* INC_BUTTON_H_ */
