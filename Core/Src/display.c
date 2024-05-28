@@ -5,11 +5,12 @@
  *      Author: hoang
  */
 
+#include "main.h"
 #include "display.h"
 
-void display7SEG(int k)
+void display7SEG(int status)
 {
-  switch (k)
+  switch (status)
   {
   case 0:
     HAL_GPIO_WritePin(SEG_GPIO_Port, SEG0_Pin | SEG1_Pin | SEG2_Pin | SEG3_Pin | SEG4_Pin | SEG5_Pin | SEG6_Pin, GPIO_PIN_RESET);

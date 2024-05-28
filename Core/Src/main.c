@@ -21,7 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main.h"
 #include "software_timer.h"
 #include "button.h"
 #include "display.h"
@@ -104,7 +103,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    fsm_man_run();
+    // fsm_man_run();
+    fsm_simple_buttons_run();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
