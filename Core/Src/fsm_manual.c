@@ -6,142 +6,42 @@
  */
 
 #include "fsm_man.h"
+#include "software_timer.h"
 #include "display.h"
-#include "global.h"
+#include "button.h"
+
+int counter = 0;
+
+void wrapAroundCounter()
+{
+	if (counter > 9)
+		counter = 0;
+	if (counter < 0)
+		counter = 9;
+}
 
 void fsm_man_run()
 {
-	switch (statusLed)
+	if (timer0_flag == 1)
 	{
-	case MAN_RED:
-		if (timer3_flag == 1)
+		setTimer0(100);
+		display7SEG(counter);
+		counter++;
+		if (counter >= 10)
 		{
-			red_red();
-			setTimer3(20);
+			counter = 0;
 		}
-		//			red_green();
-
-		if (timer0_flag == 1)
-		{
-			statusLed = GREEN_RED;
-			count1 = TIME_NORMAL_GREEN;
-			count2 = TIME_NORMAL_RED;
-			setTimer1(TIME_NORMAL_GREEN);
-			mode = 1;
-		}
-		if ((is_long_button_flag() == 1))
-		{
-			countMan1++;
-		}
-		if (is_button_pressed(0) == 1)
-		{
-			statusLed = MAN_YELLOW;
-			countMan1 = TIME_NORMAL_YELLOW;
-			mode = 3;
-			setTimer0(10000);
-		}
-		if (is_button_pressed(1) == 1)
-		{
-			countMan1 = countMan1 + 1;
-		}
-		if (is_button_pressed(2) == 1)
-		{
-			statusLed = RED_GREEN;
-			mode = 1;
-			TIME_NORMAL_RED = countMan1;
-			TIME_NORMAL_GREEN = countMan1 * 70 / 100;
-			TIME_NORMAL_YELLOW = TIME_NORMAL_RED - TIME_NORMAL_GREEN;
-
-			count1 = TIME_NORMAL_RED;
-			count2 = TIME_NORMAL_GREEN;
-			setTimer0(TIME_NORMAL_GREEN * 100);
-		}
-		break;
-	case MAN_YELLOW:
-		//			yellow_red();
-		if (timer3_flag == 1)
-		{
-			yellow_yellow();
-			setTimer3(20);
-		}
-		if (timer0_flag == 1)
-		{
-			statusLed = YELLOW_RED;
-			count1 = TIME_NORMAL_YELLOW;
-			count2 = TIME_NORMAL_RED;
-			setTimer1(TIME_NORMAL_YELLOW);
-		}
-		if (is_button_pressed(0) == 1)
-		{
-			statusLed = MAN_GREEN;
-			countMan1 = TIME_NORMAL_GREEN;
-			mode = 4;
-			setTimer0(10000);
-		}
-		if (is_button_pressed(1) == 1)
-		{
-			countMan1 = countMan1 + 1;
-		}
-		if ((is_long_button_flag() == 1))
-		{
-			countMan1++;
-		}
-		if (is_button_pressed(2) == 1)
-		{
-			statusLed = YELLOW_RED;
-			mode = 1;
-			TIME_NORMAL_YELLOW = countMan1;
-			TIME_NORMAL_RED = countMan1 / 0.3;
-			TIME_NORMAL_GREEN = TIME_NORMAL_RED - TIME_NORMAL_YELLOW;
-
-			count1 = TIME_NORMAL_YELLOW;
-			count2 = TIME_NORMAL_RED;
-			setTimer0(TIME_NORMAL_YELLOW * 100);
-		}
-		break;
-	case MAN_GREEN:
-		//			green_red();
-		if (timer3_flag == 1)
-		{
-			green_green();
-			setTimer3(20);
-		}
-		if (timer0_flag == 1)
-		{
-			statusLed = GREEN_RED;
-			count1 = TIME_NORMAL_GREEN;
-			count2 = TIME_NORMAL_RED;
-			setTimer1(TIME_NORMAL_GREEN);
-		}
-		if (is_button_pressed(0) == 1)
-		{
-			statusLed = MAN_RED;
-			countMan1 = TIME_NORMAL_RED;
-			mode = 2;
-			setTimer0(10000);
-		}
-		if (is_button_pressed(1) == 1)
-		{
-			countMan1 = countMan1 + 1;
-		}
-		if ((is_long_button_flag() == 1))
-		{
-			countMan1++;
-		}
-		if (is_button_pressed(2) == 1)
-		{
-			statusLed = GREEN_RED;
-			mode = 1;
-			TIME_NORMAL_GREEN = countMan1;
-			TIME_NORMAL_RED = countMan1 / 0.7;
-			TIME_NORMAL_YELLOW = TIME_NORMAL_RED - TIME_NORMAL_GREEN;
-
-			count1 = TIME_NORMAL_GREEN;
-			count2 = TIME_NORMAL_RED;
-			setTimer0(TIME_NORMAL_GREEN * 100);
-		}
-		break;
-	default:
-		break;
+	}
+	if (is_button_pressed(0) == 1 || is_long_button_flag(0) == 1)
+	{
+		counter = 0;
+	}
+	if (is_button_pressed(1) == 1 || is_long_button_flag(1) == 1)
+	{
+		wrapAroundCounter(++counter);
+	}
+	if (is_button_pressed(2) == 1 || is_long_button_flag(2) == 1)
+	{
+		wrapAroundCounter(--counter);
 	}
 }

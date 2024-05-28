@@ -1,0 +1,2 @@
+../Core/Src/fsm_manual.c:15:6:wrapAroundCounter	4	static
+../Core/Src/fsm_manual.c:23:6:fsm_man_run	8	static

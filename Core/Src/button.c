@@ -21,7 +21,7 @@ int TimeOutForLongKeyPress = TIME_FOR_LONG_KEY;
 int button_flag[NUM_BUTTONS] = {RESET};
 int button_flag_1s[NUM_BUTTONS] = {RESET};
 
-int long_button_flag = 0;
+int long_button_flag[NUM_BUTTONS] = {RESET};
 
 int is_button_pressed(int index)
 {
@@ -37,11 +37,11 @@ void subKeyProcess(int index)
 {
     button_flag[index] = 1;
 }
-int is_long_button_flag()
+int is_long_button_flag(int index)
 {
-    if (long_button_flag == 1)
+    if (long_button_flag[index] == 1)
     {
-        long_button_flag = 0;
+        long_button_flag[index] = 0;
         return 1;
     }
     return 0;
@@ -55,13 +55,13 @@ void getKeyInput()
         switch (i)
         {
         case 0:
-            KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON_1_GPIO_Port, BUTTON_1_Pin);
+            KeyReg0[i] = HAL_GPIO_ReadPin(RESET_BUTTON_GPIO_Port, RESET_BUTTON_Pin);
             break;
         case 1:
-            KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON_2_GPIO_Port, BUTTON_2_Pin);
+            KeyReg0[i] = HAL_GPIO_ReadPin(INC_BUTTON_GPIO_Port, INC_BUTTON_Pin);
             break;
         case 2:
-            KeyReg0[i] = HAL_GPIO_ReadPin(BUTTON_3_GPIO_Port, BUTTON_3_Pin);
+            KeyReg0[i] = HAL_GPIO_ReadPin(DEC_BUTTON_GPIO_Port, DEC_BUTTON_Pin);
             break;
         default:
             break;
@@ -95,7 +95,7 @@ void getKeyInput()
 
                     if (TimeOutForLongKeyPress == 0)
                     {
-                        long_button_flag = 1;
+                        long_button_flag[i] = 1;
                         TimeOutForLongKeyPress = TIME_FOR_LONG_KEY;
                     }
                 }

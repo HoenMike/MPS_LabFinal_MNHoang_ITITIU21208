@@ -21,11 +21,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "button.h"
-#include "fsm_auto.h"
-#include "fsm_man.h"
+#include "main.h"
 #include "software_timer.h"
-#include "global.h"
+#include "button.h"
+#include "display.h"
+#include "fsm_man.h"
 
 /* USER CODE END Includes */
 
@@ -100,10 +100,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  setTimer0(10);
   while (1)
   {
     /* USER CODE END WHILE */
-    fsm_auto_run();
     fsm_man_run();
     /* USER CODE BEGIN 3 */
   }
