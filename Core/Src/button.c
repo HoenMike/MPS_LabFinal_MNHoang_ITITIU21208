@@ -6,81 +6,108 @@
  */
 
 #include "button.h"
+#define TIME_FOR_LONG_KEY 25
+#define TIME_FOR_PRESS_KEY 200
+#define NUM_BUTTONS 3
 
-int keyReg0[3] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
-int keyReg1[3] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
-int keyReg2[3] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
-int keyReg3[3] = {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+int KeyReg0[NUM_BUTTONS] = {SET};
+int KeyReg1[NUM_BUTTONS] = {SET};
+int KeyReg2[NUM_BUTTONS] = {SET};
+int KeyReg3[NUM_BUTTONS] = {SET};
 
-int timeForPress[3] = {200, 200, 200};
-int button1_flag = 0;
-int button2_flag = 0;
-int button3_flag = 0;
+int TimeOutForKeyPress = TIME_FOR_PRESS_KEY;
+int TimeOutForLongKeyPress = TIME_FOR_LONG_KEY;
 
-int button1_flagRelease = 0;
-int button2_flagRelease = 0;
-int button3_flagRelease = 0;
+int button_flag[NUM_BUTTONS] = {RESET};
+int button_flag_1s[NUM_BUTTONS] = {RESET};
 
-GPIO_TypeDef *button_GPIO_Port[] = {RESET_BUTTON_GPIO_Port,
-                                    INC_BUTTON_GPIO_Port,
-                                    DEC_BUTTON_GPIO_Port};
-uint16_t button_Pin[] = {RESET_BUTTON_Pin,
-                         INC_BUTTON_Pin,
-                         DEC_BUTTON_Pin};
+int long_button_flag[NUM_BUTTONS] = {RESET};
 
-void getKeyInput()
+int is_button_pressed(int index)
+{
+    if (button_flag[index] == 1)
+    {
+        button_flag[index] = 0;
+        return 1;
+    }
+    return 0;
+}
+
+void subKeyProcess(int index) // index = 0, 1, 2
+{
+    button_flag[index] = 1; // set flag for button (1 = pressed)
+}
+
+int is_long_button_flag(int index) // index = 0, 1, 2
+{
+    if (long_button_flag[index] == 1) // if long_button_flag is set
+    {
+        long_button_flag[index] = 0; // reset long_button_flag
+        return 1;
+    }
+    return 0;
+}
+
+void getKeyInput() // get input from button
 {
     for (int i = 0; i < 3; i++)
     {
-        keyReg0[i] = keyReg1[i];
-        keyReg1[i] = keyReg2[i];
-        keyReg2[i] = HAL_GPIO_ReadPin(button_GPIO_Port[i], button_Pin[i]);
-
-        if ((keyReg0[i] == keyReg1[i]) && (keyReg2[i] == keyReg1[i])) // stable state
+        KeyReg2[i] = KeyReg1[i];
+        KeyReg1[i] = KeyReg0[i];
+        switch (i)
         {
-            if (keyReg3[i] != keyReg2[i]) // stable state change
+        case 0:
+            KeyReg0[i] = HAL_GPIO_ReadPin(RESET_BUTTON_GPIO_Port, RESET_BUTTON_Pin);
+            break;
+        case 1:
+            KeyReg0[i] = HAL_GPIO_ReadPin(INC_BUTTON_GPIO_Port, INC_BUTTON_Pin);
+            break;
+        case 2:
+            KeyReg0[i] = HAL_GPIO_ReadPin(DEC_BUTTON_GPIO_Port, DEC_BUTTON_Pin);
+            break;
+        default:
+            break;
+        }
+
+        if ((KeyReg1[i] == KeyReg0[i]) && (KeyReg1[i] == KeyReg2[i]))
+        {
+            if (KeyReg2[i] != KeyReg3[i])
             {
-                keyReg3[i] = keyReg2[i];
-                if (keyReg2[i] == PRESSED_STATE)
+                KeyReg3[i] = KeyReg2[i];
+
+                if (KeyReg3[i] == PRESSED_STATE)
                 {
-                    if (i == 0)
-                    {
-                        button1_flag = 1;
-                    }
-                    if (i == 1)
-                    {
-                        button2_flag = 1;
-                    }
-                    if (i == 2)
-                    {
-                        button3_flag = 1;
-                    }
-                    timeForPress[i] = 200;
-                }
-                else
-                {
-                    if (i == 0)
-                    {
-                        button1_flagRelease = 0;
-                    }
-                    if (i == 1)
-                    {
-                        button2_flagRelease = 0;
-                    }
-                    if (i == 2)
-                    {
-                        button3_flagRelease = 0;
-                    }
+                    subKeyProcess(i);
                 }
             }
             else
             {
-                timeForPress[i]--;
-                if (timeForPress[i] == 0)
+                TimeOutForKeyPress--;
+
+                if (TimeOutForKeyPress == 0)
                 {
-                    keyReg3[i] = NORMAL_STATE;
+                    if (KeyReg2[i] == PRESSED_STATE)
+                    {
+                        TimeOutForKeyPress = TIME_FOR_PRESS_KEY;
+                        button_flag_1s[i] = 1;
+                    }
+                }
+                if ((button_flag_1s[i] == 1))
+                {
+                    TimeOutForLongKeyPress--;
+
+                    if (TimeOutForLongKeyPress == 0)
+                    {
+                        long_button_flag[i] = 1;
+                        TimeOutForLongKeyPress = TIME_FOR_LONG_KEY;
+                    }
                 }
             }
+        }
+        else
+        {
+            button_flag_1s[i] = 0;
+            TimeOutForKeyPress = TIME_FOR_PRESS_KEY;
         }
     }
 }
